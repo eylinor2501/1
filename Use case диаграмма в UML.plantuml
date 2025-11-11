@@ -1,0 +1,46 @@
+@startuml
+left to right direction
+
+
+actor "Сотрудник" as Emp
+actor "HR/Кадровик" as HR
+actor "Руководитель" as Boss
+actor "Администратор" as Admin
+
+rectangle "Система учёта" as Sys {
+  usecase "Авторизация" as Auth
+  usecase "Отметить приход/уход" as Mark
+  usecase "Посмотреть личный отчёт" as MyReport
+  usecase "Редактировать данные" as Edit
+  usecase "Просмотреть отчёт подразделения" as DeptReport
+  usecase "Сформировать табель" as BuildTS
+  usecase "Экспорт табеля в таблицу" as ExportTS
+  usecase "Добавить пользователя" as AddUser
+}
+
+
+Emp --> Auth
+Auth --> Mark
+Mark --> MyReport
+
+
+HR --> Edit
+Edit --> BuildTS
+
+
+Boss --> DeptReport
+DeptReport --> BuildTS
+
+
+Admin --> AddUser
+Admin --> DeptReport
+
+
+BuildTS --> ExportTS
+
+
+HR -u-|> Emp
+Boss -u-|> Emp
+Admin -u-|> Emp
+
+@enduml
