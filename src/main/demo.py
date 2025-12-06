@@ -58,7 +58,7 @@ def section(title: str) -> None:
 
 
 def main():
-    # === Все сотрудники ===
+    # Все сотрудники
     section("Все сотрудники")
     employees = EmployeeRepository.get_all()
     emp_rows = [
@@ -75,7 +75,7 @@ def main():
         emp_rows,
     )
 
-    # === Сотрудник + его рабочие дни ===
+    #Сотрудник + его рабочие дни
     section("Сотрудник 1 + его рабочие дни")
     emp, days = get_employee_with_workdays(1)
     print(f"Сотрудник: {emp.last_name} {emp.first_name} {emp.middle_name or ''} "
@@ -89,7 +89,7 @@ def main():
     else:
         print("Рабочих дней нет.")
 
-    # === Один рабочий день + события ===
+    # Один рабочий день + события
     section("WorkDay 1 + события")
     wd, entries = get_workday_with_entries(1)
     print(f"Рабочий день ID={wd.workday_id}, дата {wd.work_date}")
@@ -102,7 +102,7 @@ def main():
     else:
         print("Событий нет.")
 
-    # === Отсутствия сотрудника ===
+    #Отсутствия сотрудника
     section("Отсутствия сотрудника 1")
     abs_pairs = get_absences_for_employee(1)
     if abs_pairs:
@@ -123,7 +123,7 @@ def main():
     else:
         print("Отсутствий нет.")
 
-    # === Все аккаунты пользователей ===
+    #Все аккаунты пользователей
     section("Учётные записи пользователей")
     accounts = UserAccountRepository.get_all()
     acc_rows = [
@@ -137,7 +137,7 @@ def main():
     ]
     print_table(["ID", "Логин", "ID сотрудника", "Статус"], acc_rows)
 
-    # === Роли пользователя ===
+    # Роли пользователя
     section("Роли пользователя 3")
     roles = get_roles_for_user(3)
     if roles:

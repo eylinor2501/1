@@ -10,7 +10,7 @@ except ImportError:
     yaml = None
     print("Внимание: модуль PyYAML не установлен, файл data.yaml создан не будет.")
 
-DB_NAME = "worktime.db"          # наша лабораторная БД
+DB_NAME = "worktime.db"
 OUT_DIR = Path("out")            # папка для выгрузок
 
 JSON_PATH = OUT_DIR / "data.json"
@@ -26,11 +26,9 @@ def get_connection() -> sqlite3.Connection:
 
 
 def fetch_employee_workdays() -> list[sqlite3.Row]:
-    """
-    Достаём Employee + WorkDays.
-    ВАЖНО: все поля WorkDays алиасим с префиксом workday_ —
-    дальше по этому префиксу строим вложенный объект.
-    """
+
+    #Достаём Employee + WorkDays.
+
     sql = """
         SELECT
             e.employee_id        AS employee_id,
@@ -56,20 +54,6 @@ def fetch_employee_workdays() -> list[sqlite3.Row]:
 
 
 def build_nested_structure(rows: list[sqlite3.Row]) -> list[dict]:
-    """
-    Из плоских строк (employee + workday) делаем:
-    [
-      {
-        employee_id: ...,
-        ...,
-        workdays: [
-          {workday_id: ..., date: ..., ...},
-          ...
-        ]
-      },
-      ...
-    ]
-    """
     employees: dict[int, dict] = {}
 
     for row in rows:
@@ -83,7 +67,6 @@ def build_nested_structure(rows: list[sqlite3.Row]) -> list[dict]:
         for key, value in row_dict.items():
             if key.startswith("workday_") or key == "workday_id":
                 # поле рабочего дня
-                # workday_date -> date, workday_total_hours -> total_hours и т.п.
                 if key == "workday_id":
                     wd_key = "id"
                 elif key.startswith("workday_"):
@@ -100,7 +83,7 @@ def build_nested_structure(rows: list[sqlite3.Row]) -> list[dict]:
             employees[emp_id] = emp_data
             employees[emp_id]["workdays"] = []
 
-        # если есть реальный рабочий день (а не сплошные NULL)
+        # если есть реальный рабочий день
         if any(v is not None for v in workday_data.values()):
             employees[emp_id]["workdays"].append(workday_data)
 
@@ -118,10 +101,6 @@ def export_json(data: list[dict]):
 
 
 def export_csv(rows: list[sqlite3.Row]):
-    """
-    Для CSV делаем плоскую структуру — каждая строка это
-    employee + один workday (как есть в rows).
-    """
     if not rows:
         print("Нет данных для CSV.")
         return

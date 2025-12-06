@@ -7,7 +7,6 @@ from db import get_connection
 from models import Employee, WorkDay, TimeEntry, Absence, Role
 
 
-# ====== Базовые выборки (п.4.1) ======
 
 def get_employee_with_workdays(employee_id: int) -> Tuple[Employee, List[WorkDay]]:
     from repositories import EmployeeRepository, WorkDayRepository

@@ -4,15 +4,11 @@ from db import get_connection
 from models import (
     Employee, WorkDay, TimeEntry, Absence, Role, UserAccount, UserRole
 )
-
-
-# ---------- Employee CRUD ----------
-
 class EmployeeRepository:
 
     @staticmethod
     def create(employee: Employee) -> int:
-        """Добавить сотрудника. Возвращает новый employee_id."""
+        #Добавить сотрудника. Возвращает новый employee_id
         conn = get_connection()
         cur = conn.cursor()
         cur.execute("""
@@ -67,7 +63,7 @@ class EmployeeRepository:
 
     @staticmethod
     def update(employee: Employee) -> None:
-        """Обновить данные сотрудника по его employee_id."""
+        #Обновить данные сотрудника по его employee_id
         if employee.employee_id is None:
             raise ValueError("employee_id is required for update")
 
@@ -180,10 +176,10 @@ class AbsenceRepository:
 
     @staticmethod
     def create(absence: Absence) -> int:
-        """
-        Создать запись об отсутствии.
-        Возвращает новый absence_id.
-        """
+
+        #Создать запись об отсутствии.
+        #Возвращает новый absence_id.
+
         conn = get_connection()
         cur = conn.cursor()
         cur.execute("""
@@ -203,7 +199,7 @@ class AbsenceRepository:
 
     @staticmethod
     def get_for_employee(employee_id: int) -> List[Absence]:
-        """Получить все отсутствия конкретного сотрудника."""
+        #Получить все отсутствия конкретного сотрудника.
         conn = get_connection()
         cur = conn.cursor()
         cur.execute("""
@@ -228,7 +224,7 @@ class AbsenceRepository:
 
     @staticmethod
     def update_status(absence_id: int, new_status: str) -> None:
-        """Обновить статус отсутствия (например, Requested → Approved)."""
+        #Обновить статус отсутствия (например, Requested → Approved).
         conn = get_connection()
         cur = conn.cursor()
         cur.execute("""
@@ -241,7 +237,7 @@ class AbsenceRepository:
 
     @staticmethod
     def delete(absence_id: int) -> None:
-        """Удалить запись об отсутствии."""
+        #Удалить запись об отсутствии.
         conn = get_connection()
         cur = conn.cursor()
         cur.execute("DELETE FROM Absences WHERE absence_id = ?", (absence_id,))
@@ -255,10 +251,10 @@ class UserAccountRepository:
 
     @staticmethod
     def create(account: UserAccount) -> int:
-        """
-        Создать учётную запись пользователя.
-        Возвращает новый user_id.
-        """
+
+        #Создаём учётную запись пользователя.
+        #Возвращает новый user_id.
+
         conn = get_connection()
         cur = conn.cursor()
         cur.execute("""
@@ -294,7 +290,6 @@ class UserAccountRepository:
 
     @staticmethod
     def get_by_login(login: str) -> Optional[UserAccount]:
-        """Получить учётку по логину (полезно для авторизации)."""
         conn = get_connection()
         cur = conn.cursor()
         cur.execute("SELECT * FROM UserAccounts WHERE login = ?", (login,))
@@ -353,7 +348,7 @@ class UserAccountRepository:
 
     @staticmethod
     def delete(user_id: int) -> None:
-        """Удалить учётную запись."""
+        #Удалить учётную запись.
         conn = get_connection()
         cur = conn.cursor()
         # сначала удалим все связи ролей этого пользователя
@@ -363,13 +358,12 @@ class UserAccountRepository:
         conn.close()
 
 
-# ---------- UserRole "CRUD" для связи M:N ----------
 
 class UserRoleRepository:
 
     @staticmethod
     def add_role_to_user(user_id: int, role_id: int) -> None:
-        """Назначить пользователю роль (создать запись в UserRoles)."""
+        #Назначить пользователю роль (создать запись в UserRoles)
         conn = get_connection()
         cur = conn.cursor()
         cur.execute("""
@@ -381,7 +375,7 @@ class UserRoleRepository:
 
     @staticmethod
     def remove_role_from_user(user_id: int, role_id: int) -> None:
-        """Убрать у пользователя конкретную роль."""
+        #Убрать у пользователя конкретную роль.
         conn = get_connection()
         cur = conn.cursor()
         cur.execute("""
@@ -393,7 +387,7 @@ class UserRoleRepository:
 
     @staticmethod
     def get_role_ids_for_user(user_id: int) -> List[int]:
-        """Получить список ID ролей, назначенных пользователю."""
+        #Получить список ID ролей, назначенных пользователю
         conn = get_connection()
         cur = conn.cursor()
         cur.execute("SELECT role_id FROM UserRoles WHERE user_id = ?", (user_id,))
@@ -403,7 +397,7 @@ class UserRoleRepository:
 
     @staticmethod
     def delete_all_for_user(user_id: int) -> None:
-        """Удалить все роли пользователя (очистить UserRoles для него)."""
+        #Удалить все роли пользователя (очистить UserRoles для него)
         conn = get_connection()
         cur = conn.cursor()
         cur.execute("DELETE FROM UserRoles WHERE user_id = ?", (user_id,))
