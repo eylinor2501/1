@@ -17,11 +17,6 @@ from services import (
 
 
 def print_table(headers: Sequence[str], rows: Iterable[Sequence[Any]]) -> None:
-    """
-    Простой табличный вывод в консоль.
-    headers – список названий колонок
-    rows – список строк (кортежей / списков значений)
-    """
     rows = list(rows)
     # приводим всё к строкам
     str_rows = [[str(x) for x in row] for row in rows]
