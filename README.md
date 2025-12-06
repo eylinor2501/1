@@ -56,8 +56,8 @@ Use Case диаграмма:
 ![](src/main/resources/Диаграмма%20admin.png)
 
 ER-диаграмма:
-![](docs/diagrams/Диаграмма12png.png)
 
+![](docs/diagrams/ERdiagramm.png)
 # *Описание программы*:
 Программа Main.py выводит на экран пользователя сообщение "hello world"
 
