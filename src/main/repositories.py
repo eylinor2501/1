@@ -326,7 +326,7 @@ class UserAccountRepository:
 
     @staticmethod
     def update(account: UserAccount) -> None:
-        """Обновить данные учётной записи (по user_id)."""
+        #Обновить данные учётной записи
         if account.user_id is None:
             raise ValueError("user_id is required for update")
 
