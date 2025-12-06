@@ -1,0 +1,65 @@
+[
+    {
+        "employee_id": 1,
+        "last_name": "Иванов",
+        "first_name": "Иван",
+        "middle_name": "Иванович",
+        "position": "Разработчик",
+        "department": "ИТ-отдел",
+        "workdays": [
+            {
+                "id": 1,
+                "date": "2025-12-01",
+                "planned_start": "09:00",
+                "total_hours": 8.0
+            },
+            {
+                "id": 2,
+                "date": "2025-12-02",
+                "planned_start": "09:00",
+                "total_hours": 7.5
+            }
+        ]
+    },
+    {
+        "employee_id": 2,
+        "last_name": "Сидорова",
+        "first_name": "Анна",
+        "middle_name": "Сергеевна",
+        "position": "HR-менеджер",
+        "department": "Отдел кадров",
+        "workdays": [
+            {
+                "id": 3,
+                "date": "2025-12-01",
+                "planned_start": "09:00",
+                "total_hours": 8.0
+            }
+        ]
+    },
+    {
+        "employee_id": 3,
+        "last_name": "Петров",
+        "first_name": "Пётр",
+        "middle_name": "Петрович",
+        "position": "Руководитель отдела",
+        "department": "Отдел продаж",
+        "workdays": [
+            {
+                "id": 4,
+                "date": "2025-12-01",
+                "planned_start": "10:00",
+                "total_hours": 7.0
+            }
+        ]
+    },
+    {
+        "employee_id": 4,
+        "last_name": "Смирнов",
+        "first_name": "Алексей",
+        "middle_name": "Олегович",
+        "position": "Системный администратор",
+        "department": "ИТ-отдел",
+        "workdays": []
+    }
+]
