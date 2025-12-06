@@ -4,14 +4,15 @@ import csv
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+# Попробуем подключить PyYAML для YAML
 try:
     import yaml
 except ImportError:
     yaml = None
     print("Внимание: модуль PyYAML не установлен, файл data.yaml создан не будет.")
 
-DB_NAME = "worktime.db"
-OUT_DIR = Path("out")            # папка для выгрузок
+DB_NAME = "worktime.db"          # наша БД из лабораторной
+OUT_DIR = Path("out")            # папка для вывода
 
 JSON_PATH = OUT_DIR / "data.json"
 CSV_PATH = OUT_DIR / "data.csv"
@@ -26,9 +27,11 @@ def get_connection() -> sqlite3.Connection:
 
 
 def fetch_employee_workdays() -> list[sqlite3.Row]:
-
-    #Достаём Employee + WorkDays.
-
+    """
+    Достаём Employee + WorkDays.
+    Все поля WorkDays идут с префиксом workday_, чтобы затем
+    построить вложенный объект workdays.
+    """
     sql = """
         SELECT
             e.employee_id        AS employee_id,
@@ -54,13 +57,16 @@ def fetch_employee_workdays() -> list[sqlite3.Row]:
 
 
 def build_nested_structure(rows: list[sqlite3.Row]) -> list[dict]:
+    """
+    Из плоских строк (employee + workday) делаем список сотрудников
+    с вложенным списком workdays.
+    """
     employees: dict[int, dict] = {}
 
     for row in rows:
         row_dict = dict(row)
         emp_id = row_dict["employee_id"]
 
-        # разделяем поля сотрудника и рабочие дни
         emp_data: dict = {}
         workday_data: dict = {}
 
@@ -70,7 +76,7 @@ def build_nested_structure(rows: list[sqlite3.Row]) -> list[dict]:
                 if key == "workday_id":
                     wd_key = "id"
                 elif key.startswith("workday_"):
-                    wd_key = key[len("workday_") :]
+                    wd_key = key[len("workday_"):]
                 else:
                     wd_key = key
                 workday_data[wd_key] = value
@@ -83,7 +89,7 @@ def build_nested_structure(rows: list[sqlite3.Row]) -> list[dict]:
             employees[emp_id] = emp_data
             employees[emp_id]["workdays"] = []
 
-        # если есть реальный рабочий день
+        # если есть реальный рабочий день (не все поля None)
         if any(v is not None for v in workday_data.values()):
             employees[emp_id]["workdays"].append(workday_data)
 
@@ -101,17 +107,33 @@ def export_json(data: list[dict]):
 
 
 def export_csv(rows: list[sqlite3.Row]):
+    """
+    Для CSV оставляем плоскую структуру — каждая строка это employee + workday.
+    Кодировка utf-8-sig, чтобы Excel нормально открыл русский.
+    И ДЕЛАЕМ workday_total_hours ТЕКСТОМ с апострофом,
+    чтобы Excel не превращал 8.0 в дату 07.май.
+    """
     if not rows:
         print("Нет данных для CSV.")
         return
 
     fieldnames = rows[0].keys()
 
-    with CSV_PATH.open("w", encoding="utf-8", newline="") as f:
+    with CSV_PATH.open("w", encoding="utf-8-sig", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames, delimiter=";")
         writer.writeheader()
+
         for row in rows:
-            writer.writerow(dict(row))
+            row_dict = dict(row)
+
+            # Превращаем workday_total_hours в текст, чтобы Excel не трогал
+            if row_dict.get("workday_total_hours") is not None:
+                # Апостроф говорит Excel: "это текст, а не число/дата"
+                row_dict["workday_total_hours"] = (
+                    f"'{row_dict['workday_total_hours']}"
+                )
+
+            writer.writerow(row_dict)
 
     print(f"CSV сохранён в {CSV_PATH}")
 
@@ -122,7 +144,7 @@ def export_xml(data: list[dict]):
     for emp in data:
         emp_elem = ET.SubElement(root, "employee")
 
-        # поля сотрудника (всё, кроме workdays)
+        # поля сотрудника (кроме workdays)
         for key, value in emp.items():
             if key == "workdays":
                 continue
